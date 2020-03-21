@@ -4,9 +4,8 @@ env/
 __pycache__/
 test.db
 frontend/node_modules/
-backend/src/database/database.db
-frontend/package-lock.json
 frontend/src/environments/environment.ts
+backend/src/database/database.db
 
 
 # OS generated files #
