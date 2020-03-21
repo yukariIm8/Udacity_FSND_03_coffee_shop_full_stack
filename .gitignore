@@ -3,12 +3,11 @@ env/
 .vscode/
 __pycache__/
 test.db
-package-lock.json
-backend/requirements.txt
+frontend/node_modules/
 backend/src/database/database.db
 frontend/package-lock.json
 frontend/src/environments/environment.ts
-frontend/node_modules/
+
 
 # OS generated files #
 ######################
