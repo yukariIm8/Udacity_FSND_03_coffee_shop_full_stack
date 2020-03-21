@@ -8,6 +8,7 @@ backend/requirements.txt
 backend/src/database/database.db
 frontend/package-lock.json
 frontend/src/environments/environment.ts
+frontend/node_modules/
 
 # OS generated files #
 ######################
