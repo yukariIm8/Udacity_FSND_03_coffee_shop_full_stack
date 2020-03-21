@@ -34,10 +34,14 @@ db_drop_and_create_all()
 def get_drinks():
     """Retreive all drinks with short form representation."""
     drinks = Drink.query.all()
+
+    if drinks is None:
+        abort(404, 'There is no drinks data.')
+
     drinks_short = [drink.short() for drink in drinks]
     return jsonify({
-        "success": True,
-        "drinks": drinks_short
+        'success': True,
+        'drinks': drinks_short
     }), 200
 
 '''
@@ -56,10 +60,14 @@ def get_drinks():
 def get_drinks_detail(jwt):
     """Retreive all drinks with long form representation."""
     drinks = Drink.query.all()
+
+    if drinks is None:
+        abort(404, 'There is no drinks data.')
+
     drinks_long = [drink.long() for drink in drinks]
     return jsonify({
-        "success": True,
-        "drinks": drinks_long
+        'success': True,
+        'drinks': drinks_long
     }), 200
 
 '''
@@ -77,22 +85,25 @@ def get_drinks_detail(jwt):
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
 def create_drink(jwt):
-    """Create and return new drink with long form representation."""
+    """Create a new drink."""
     try:
         if request.method != 'GET' and request.method != 'POST':
             abort(405)
         data = request.get_json()
-        title = data.get('title', None)
-        recipe = data.get('recipe', None)
+        title = data.get('title')
+        recipe = data.get('recipe')
+
+        """Convert recipe into JSON."""
         drink = Drink(title=title, recipe=json.dumps(recipe))
+
         drink.insert()
     except:
         db.session.rollback()
         abort(422)
     finally:
         return jsonify({
-            "success": True,
-            "drinks": drink.long()
+            'success': True,
+            'drinks': drink.long()
         }), 200
         db.session.close()
 
@@ -113,15 +124,16 @@ def create_drink(jwt):
 @app.route('/drinks/<int:drink_id>', methods=['PATCH'])
 @requires_auth('patch:drinks')
 def patch_drink(jwt, drink_id):
-    """Update and return a drink with long form representation."""
+    """Update a drink info (title and recipe)."""
 
     data = request.get_json()
     title = data.get('title')
     recipe = data.get('recipe')
+
     drink = Drink.query.get(drink_id)
 
     if drink is None:
-        abort(404)
+        abort(404, 'There is no such a drink.')
 
     try:
         drink.title = title
@@ -132,8 +144,8 @@ def patch_drink(jwt, drink_id):
         abort(422)
     finally:
         return jsonify({
-            "success": True,
-            "drinks": drink.long()
+            'success': True,
+            'drinks': drink.long()
         }), 200
         db.session.close()
 
@@ -157,7 +169,8 @@ def delete_drink(jwt, drink_id):
     drink = Drink.query.get(drink_id)
 
     if drink is None:
-        abort(404)
+        abort(404, 'There is no such a drink.')
+
     try:
         drink.delete()
     except:
@@ -165,8 +178,8 @@ def delete_drink(jwt, drink_id):
         abort(422)
     finally:
         return jsonify({
-            "success": True,
-            "delete": drink_id
+            'success': True,
+            'delete': drink_id
         }), 200
         db.session.close()
 
@@ -179,9 +192,9 @@ Example error handling for unprocessable entity
 @app.errorhandler(422)
 def unprocessable(error):
     return jsonify({
-        "success": False,
-        "error": 422,
-        "message": "unprocessable"
+        'success': False,
+        'error': 422,
+        'message': 'unprocessable'
     }), 422
 
 '''
@@ -201,7 +214,7 @@ def bad_request(error):
     return jsonify({
         'success': False,
         'error': 400,
-        'message': "bad request"
+        'message': 'bad request'
     }), 400
 
 
@@ -210,7 +223,7 @@ def method_not_allowed(error):
     return jsonify({
         'success': False,
         'error': 405,
-        'message': "method not allowed"
+        'message': 'method not allowed'
     }), 405
 
 
@@ -219,7 +232,7 @@ def internal_sever_error(error):
     return jsonify({
         'success': False,
         'error': 500,
-        'message': "internal server error"
+        'message': 'internal server error'
     }), 500
 
 '''
@@ -231,9 +244,18 @@ def internal_sever_error(error):
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({
-        "success": False,
-        "error": 404,
-        "message": "resource not found"
+        'success': False,
+        'error': 404,
+        'message': 'resource not found'
+    }), 404
+
+
+@app.errorhandler(Exception)
+def exception_error_handler(error):
+    return jsonify({
+        'success': False,
+        'error': 404,
+        'message': 'resource not found'
     }), 404
 
 '''
