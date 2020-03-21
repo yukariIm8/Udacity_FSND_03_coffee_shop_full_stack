@@ -4,7 +4,7 @@ from sqlalchemy import exc
 import json
 from flask_cors import CORS
 
-from .database.models import db_drop_and_create_all, setup_db, Drink
+from .database.models import db_drop_and_create_all, setup_db, Drink, db
 from .auth.auth import AuthError, requires_auth
 
 app = Flask(__name__)
@@ -30,11 +30,12 @@ db_drop_and_create_all()
 @app.route('/drinks', methods=['GET'])
 def get_drinks():
     """Retreive all drinks with short form representation."""
-    drinks = [drink.short() for drink in Drink.query.all()]
+    drinks = Drink.query.all()
+    drinks_short = [drink.short() for drink in drinks]
     return jsonify({
         "success": True,
-        "drinks": drinks
-    }, 200)
+        "drinks": drinks_short
+    }), 200
 
 '''
 @TODO implement endpoint
@@ -46,13 +47,14 @@ def get_drinks():
 '''
 @app.route('/drinks-detail', methods=['GET'])
 @requires_auth('get:drinks-detail')
-def get_drinks_detail():
+def get_drinks_detail(jwt):
     """Retreive all drinks with long form representation."""
-    drinks = [drink.long() for drink in Drink.query.all()]
+    drinks = Drink.query.all()
+    drinks_long = [drink.long() for drink in drinks]
     return jsonify({
         "success": True,
-        "drinks": drinks
-    }, 200)
+        "drinks": drinks_long
+    }), 200
 
 '''
 @TODO implement endpoint
@@ -65,23 +67,25 @@ def get_drinks_detail():
 '''
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
-def create_drink():
+def create_drink(jwt):
     """Create new drink and returns created drink with long form representation."""
     try:
         if request.method != 'GET' and request.method != 'POST':
             abort(405)
         data = request.get_json()
-        drink = Drink(title=data['title'],recipe=data['recipe'])
+        title = data.get('title', None)
+        recipe = data.get('recipe', None)
+        drink = Drink(title=title, recipe=json.dumps(recipe))
         drink.insert()
     except:
         db.session.rollback()
         abort(422)
     finally:
-        db.session.close()
         return jsonify({
             "success": True,
-            "drinks": [drink.long()]
-        }, 200)
+            "drinks": drink.long()
+        }), 200
+        db.session.close()
 
 '''
 @TODO implement endpoint
@@ -94,13 +98,13 @@ def create_drink():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 '''
-@app.route('/drinks/<int:id>', methods=['PATCH'])
+@app.route('/drinks/<int:drink_id>', methods=['PATCH'])
 @requires_auth('patch:drinks')
-def patch_drink(drink_id):
+def patch_drink(jwt, drink_id):
     """Update a drink and returns updated drink with long form representation."""
 
     data = request.get_json()
-    drink = Drink.query.filter_by(id=drink_id)
+    drink = Drink.query.get(drink_id)
 
     if drink is None:
         abort(404)
@@ -113,11 +117,11 @@ def patch_drink(drink_id):
         db.session.rollback()
         abort(422)
     finally:
-        db.session.close()
         return jsonify ({
             "success": True,
             "drinks": [drink.long()]
-        }, 200)
+        }), 200
+        db.session.close()
 
 '''
 @TODO implement endpoint
@@ -129,26 +133,25 @@ def patch_drink(drink_id):
     returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
         or appropriate status code indicating reason for failure
 '''
-@app.route('/drinks/<int:id>', methods=['DELETE'])
+@app.route('/drinks/<int:drink_id>', methods=['DELETE'])
 @requires_auth('delete:drinks')
-def delete_drink(drink_id):
+def delete_drink(jwt, drink_id):
     """Delete a drink."""
-    drink = Drink.query.filter_by(id=drink_id)
+    drink = Drink.query.get(drink_id)
 
     if drink is None:
         abort(404)
-
     try:
         drink.delete()
     except:
-        db.rollback()
+        db.session.rollback()
         abort(422)
     finally:
-        db.session.close()
         return jsonify({
             "success": True,
             "delete": drink_id
-        }, 200)
+        }), 200
+        db.session.close()
 
 ## Error Handling
 '''
@@ -212,3 +215,8 @@ def not_found(error):
 @TODO implement error handler for AuthError
     error handler should conform to general task above 
 '''
+@app.errorhandler(AuthError)
+def auth_error_handler(error):
+    response = jsonify(error.error)
+    response.status_code = error.status_code
+    return response
