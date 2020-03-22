@@ -181,6 +181,7 @@ def verify_decode_jwt(token):
 
 
 def requires_auth(permission=''):
+    """A decorater for authentication."""
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
