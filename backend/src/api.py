@@ -93,7 +93,7 @@ def create_drink(jwt):
         title = data.get('title')
         recipe = data.get('recipe')
 
-        """Convert recipe into JSON."""
+        # Convert recipe dictionary into JSON.
         drink = Drink(title=title, recipe=json.dumps(recipe))
 
         drink.insert()
@@ -124,7 +124,7 @@ def create_drink(jwt):
 @app.route('/drinks/<int:drink_id>', methods=['PATCH'])
 @requires_auth('patch:drinks')
 def patch_drink(jwt, drink_id):
-    """Update a drink info (title and recipe)."""
+    """Update a drink info: title and recipe."""
 
     data = request.get_json()
     title = data.get('title')
