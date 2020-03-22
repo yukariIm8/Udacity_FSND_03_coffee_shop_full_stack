@@ -250,14 +250,6 @@ def not_found(error):
     }), 404
 
 
-@app.errorhandler(Exception)
-def exception_error_handler(error):
-    return jsonify({
-        'success': False,
-        'error': 404,
-        'message': 'resource not found'
-    }), 404
-
 '''
 @TODO implement error handler for AuthError
     error handler should conform to general task above
