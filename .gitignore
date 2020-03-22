@@ -3,8 +3,6 @@ env/
 .vscode/
 __pycache__/
 test.db
-frontend/node_modules/
-frontend/src/environments/environment.ts
 backend/src/database/database.db
 
 
