@@ -122,7 +122,7 @@ The API will return five error types when requests fail:
     - Request Arguments: None.
     - Return: success value and a list of drinks with short form representation.
 - Sample: `{{host}}/drinks`
-    - Please use postman collection ./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json
+    - Please use postman collection `./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json`
 ```
 {
     "drinks": [
@@ -148,7 +148,7 @@ The API will return five error types when requests fail:
     - Request Arguments: JWT token.
     - Return: success value and a list of drinks with long form representation.
 - Sample: `{{host}}/drinks-detail`
-    - Please use postman collection ./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json
+    - Please use postman collection `./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json`
 ```
 {
     "drinks": [
@@ -175,7 +175,7 @@ The API will return five error types when requests fail:
     - Request Arguments: JWT token.
     - Return: success value and a dictionary of the created drink with long form representation.
 - Sample: `{{host}}/drinks`
-    - Please use postman collection ./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json
+    - Please use postman collection `./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json`
 ```
 {
     "drinks": {
@@ -200,7 +200,7 @@ The API will return five error types when requests fail:
     - Request Arguments: JWT token and an ID of a drink to update.
     - Return: success value and a list of the updated drink with long form representation.
 - Sample: `{{host}}/drinks/1`
-    - Please use postman collection ./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json
+    - Please use postman collection `./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json`
 ```
 {
     "drinks": [
@@ -221,7 +221,7 @@ The API will return five error types when requests fail:
     - Request Arguments: JWT token and an ID of a drink to delete.
     - Return: success value and the ID of a deleted drink.
 - Sample: `{{host}}/drinks/1`
-    - Please use postman collection ./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json
+    - Please use postman collection `./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json`
 ```
 {
     "delete": 1,
