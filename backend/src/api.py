@@ -145,7 +145,7 @@ def patch_drink(jwt, drink_id):
     finally:
         return jsonify({
             'success': True,
-            'drinks': drink.long()
+            'drinks': [drink.long()]
         }), 200
         db.session.close()
 
