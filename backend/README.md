@@ -83,3 +83,148 @@ There are `@TODO` comments throughout the `./backend/src`. We recommend tackling
 
 1. `./src/auth/auth.py`
 2. `./src/api.py`
+
+## Error Handling
+
+Errors are returned as JSON objects in the following formats:
+
+```
+{
+    'success': False,
+    'error': 400,
+    'message': "bad request"
+}
+
+or
+
+{
+    'code': 'unauthorized',
+    'description': 'Permission not found.'
+}
+```
+
+The API will return five error types when requests fail:
+
+- 400: Bad Request
+- 401: Unauthorized
+- 403: Forbidden
+- 404: Resource Not Found
+- 405: Method Not Allowed
+- 422: Not Processable
+- 500: Internal Sever Error
+
+## Endpoints
+
+### GET /drinks
+
+- General: Retrieve all drinks.
+    - Permission: Public
+    - Request Arguments: None.
+    - Return: success value and a list of drinks with short form representation.
+- Sample: `{{host}}/drinks`
+    - Please use postman collection ./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json
+```
+{
+    "drinks": [
+        {
+            "id": 1,
+            "recipe": [
+                {
+                    "color": "blue",
+                    "parts": 1
+                }
+            ],
+            "title": "Water3"
+        }
+    ],
+    "success": true
+}
+```
+
+### GET /drinks-detail
+
+- General: Retrieve all drinks.
+    - Permission: Barista and Manager
+    - Request Arguments: JWT token.
+    - Return: success value and a list of drinks with long form representation.
+- Sample: `{{host}}/drinks-detail`
+    - Please use postman collection ./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json
+```
+{
+    "drinks": [
+        {
+            "id": 1,
+            "recipe": [
+                {
+                    "color": "blue",
+                    "name": "Water",
+                    "parts": 1
+                }
+            ],
+            "title": "Water3"
+        }
+    ],
+    "success": true
+}
+```
+
+### POST /drinks
+
+- General: Create a new drink.
+    - Permission: Manager
+    - Request Arguments: JWT token.
+    - Return: success value and a dictionary of the created drink with long form representation.
+- Sample: `{{host}}/drinks`
+    - Please use postman collection ./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json
+```
+{
+    "drinks": {
+        "id": null,
+        "recipe": [
+            {
+                "color": "blue",
+                "name": "Water",
+                "parts": 1
+            }
+        ],
+        "title": "Water3"
+    },
+    "success": true
+}
+```
+
+### PATCH /drinks/{drinks_id}
+
+- General: Update drink using a drink ID.
+    - Permission: Manager
+    - Request Arguments: JWT token and an ID of a drink to update.
+    - Return: success value and a list of the updated drink with long form representation.
+- Sample: `{{host}}/drinks/1`
+    - Please use postman collection ./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json
+```
+{
+    "drinks": [
+        {
+            "id": 1,
+            "recipe": null,
+            "title": "Water5"
+        }
+    ],
+    "success": true
+}
+```
+
+### DELETE /drinks/{drinks_id}
+
+- General: Delete drink using a drink ID.
+    - Permission: Manager
+    - Request Arguments: JWT token and an ID of a drink to delete.
+    - Return: success value and the ID of a deleted drink.
+- Sample: `{{host}}/drinks/1`
+    - Please use postman collection ./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json
+```
+{
+    "delete": 1,
+    "success": true
+}
+```
